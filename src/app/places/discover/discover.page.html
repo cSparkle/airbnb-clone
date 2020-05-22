@@ -11,6 +11,10 @@
 </ion-header>
 
 <ion-content>
+  <ion-segment (ionChange)="onFilterUpdate($event)" value="all">
+    <ion-segment-button value="all">All Places</ion-segment-button>
+    <ion-segment-button value="bookable">Bookable Places</ion-segment-button>
+  </ion-segment>
   <ion-grid>
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2">
@@ -39,9 +43,12 @@
     </ion-row>
     <ion-row>
       <ion-col size="12" size-sm="8" offset-sm="2">
-        <ion-list>
+        <ion-virtual-scroll
+          [items]="listedLoadedPlaces"
+          approxItemHeight="70px"
+        >
           <ion-item
-            *ngFor="let place of loadedPlaces.slice(1)"
+            *virtualItem="let place"
             [routerLink]="['/places/tabs/discover', place.id]"
             detail
           >
@@ -53,7 +60,7 @@
               <p>{{ place.description }}</p>
             </ion-label>
           </ion-item>
-        </ion-list>
+        </ion-virtual-scroll>
       </ion-col>
     </ion-row>
   </ion-grid>
