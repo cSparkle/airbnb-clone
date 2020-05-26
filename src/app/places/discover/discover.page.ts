@@ -19,6 +19,14 @@ export class DiscoverPage implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.fetchPlaces();
+  }
+
+  ionViewWillEnter() {
+    this.fetchPlaces();
+  }
+
+  fetchPlaces() {
     this.loadedPlaces = this.placesService.places;
     this.listedLoadedPlaces = this.loadedPlaces.slice(1);
   }

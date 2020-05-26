@@ -14,6 +14,14 @@ export class OffersPage implements OnInit {
   constructor(private placesService: PlacesService, private router: Router) {}
 
   ngOnInit() {
+    this.fetchOffers();
+  }
+
+  ionViewWillEnter() {
+    this.fetchOffers();
+  }
+
+  fetchOffers() {
     this.offers = this.placesService.places;
   }
 
