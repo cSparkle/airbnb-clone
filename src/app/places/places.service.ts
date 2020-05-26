@@ -11,21 +11,27 @@ export class PlacesService {
       "Manhattan Mansion",
       "In the heart of NYC",
       "../../assets/images/nyc_mansion.jpg",
-      489.99
+      489.99,
+      new Date("2020-06-01"),
+      new Date("2020-06-03")
     ),
     new Place(
       "p2",
       "L'Amour Toujour",
       "A romantic hideaway in Paris",
       "../../assets/images/paris.jpeg",
-      349.99
+      349.99,
+      new Date("2020-06-01"),
+      new Date("2020-06-03")
     ),
     new Place(
       "p3",
       "The Foggy Palace",
       "Not your average hotel room!",
       "../../assets/images/fairy_cottage.jpg",
-      149.99
+      149.99,
+      new Date("2020-06-01"),
+      new Date("2020-06-03")
     ),
   ];
 
