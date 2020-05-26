@@ -1,8 +1,8 @@
 import { Component, OnInit, OnDestroy } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FormGroup, FormControl, Validators } from "@angular/forms";
 import { Subscription } from "rxjs";
-import { NavController } from "@ionic/angular";
+import { NavController, LoadingController } from "@ionic/angular";
 
 import { PlacesService } from "../../places.service";
 import { Place } from "../../place.model";
@@ -14,13 +14,15 @@ import { Place } from "../../place.model";
 })
 export class EditOfferPage implements OnInit, OnDestroy {
   place: Place;
-  editOfferForm: FormGroup;
+  editPlaceForm: FormGroup;
   private placeSub: Subscription;
 
   constructor(
     private route: ActivatedRoute,
     private placesService: PlacesService,
-    private navCtrl: NavController
+    private navCtrl: NavController,
+    private router: Router,
+    private loadingCtrl: LoadingController
   ) {}
 
   ngOnInit() {
@@ -34,7 +36,7 @@ export class EditOfferPage implements OnInit, OnDestroy {
         .getPlace(paramMap.get("placeId"))
         .subscribe((place) => {
           this.place = place;
-          this.editOfferForm = new FormGroup({
+          this.editPlaceForm = new FormGroup({
             title: new FormControl(this.place.title, {
               updateOn: "blur",
               validators: [Validators.required],
@@ -54,10 +56,28 @@ export class EditOfferPage implements OnInit, OnDestroy {
     }
   }
 
-  onEditOffer() {
-    console.log("editing offer");
-    if (!this.editOfferForm.valid) {
+  onEditPlace() {
+    if (!this.editPlaceForm.valid) {
       return;
     }
+
+    this.loadingCtrl
+      .create({
+        message: "Updating...",
+      })
+      .then((loadingElement) => {
+        loadingElement.present();
+        this.placesService
+          .editPlace(
+            this.place.id,
+            this.editPlaceForm.value.title,
+            this.editPlaceForm.value.description
+          )
+          .subscribe(() => {
+            loadingElement.dismiss();
+            this.editPlaceForm.reset();
+            this.router.navigate(["/places/tabs/offers"]);
+          });
+      });
   }
 }
