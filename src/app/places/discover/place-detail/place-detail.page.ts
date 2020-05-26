@@ -5,11 +5,13 @@ import {
   NavController,
   ModalController,
   ActionSheetController,
+  LoadingController,
 } from "@ionic/angular";
 
 import { PlacesService } from "../../places.service";
 import { Place } from "../../place.model";
 import { CreateBookingComponent } from "../../../bookings/create-booking/create-booking.component";
+import { BookingService } from "src/app/bookings/booking.service";
 
 @Component({
   selector: "app-place-detail",
@@ -25,7 +27,9 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private placesService: PlacesService,
     private modalCtrl: ModalController,
-    private actionSheetCtrl: ActionSheetController
+    private actionSheetCtrl: ActionSheetController,
+    private bookingService: BookingService,
+    private loadingCtrl: LoadingController
   ) {}
 
   ngOnInit() {
@@ -78,7 +82,6 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
   }
 
   openBookingModal(mode: "select" | "random") {
-    console.log("mode: ", mode);
     this.modalCtrl
       .create({
         component: CreateBookingComponent,
@@ -89,9 +92,29 @@ export class PlaceDetailPage implements OnInit, OnDestroy {
         return modalElement.onDidDismiss();
       })
       .then((resultData) => {
-        console.log("resultdata: ", resultData);
         if (resultData.role === "confirm") {
-          console.log("BOOKED!");
+          this.loadingCtrl
+            .create({
+              message: "Booking place...",
+            })
+            .then((loadingElement) => {
+              loadingElement.present();
+              const bookingData = resultData.data.bookingData;
+              this.bookingService
+                .addBooking(
+                  this.place.id,
+                  this.place.title,
+                  this.place.imageUrl,
+                  bookingData.firstName,
+                  bookingData.lastName,
+                  bookingData.guestNumber,
+                  bookingData.dateFrom,
+                  bookingData.dateTo
+                )
+                .subscribe(() => {
+                  loadingElement.dismiss();
+                });
+            });
         }
       });
   }
